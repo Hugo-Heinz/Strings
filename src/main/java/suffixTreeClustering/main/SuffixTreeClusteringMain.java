@@ -34,7 +34,6 @@ public class SuffixTreeClusteringMain {
 
 	private static final Logger LOGGER = Logger.getGlobal();
 
-	
 	/**
 	 * 
 	 */
@@ -57,7 +56,7 @@ public class SuffixTreeClusteringMain {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		XMLDataReader reader = new XMLDataReader(TextInfo.getSuffixTreePath());
 		SuffixTreeInfo corpus = reader.read(typeStrings);
 
@@ -83,6 +82,7 @@ public class SuffixTreeClusteringMain {
 		System.out.println("1 - TF-IDF");
 		System.out.println("2 - TF-DF");
 		System.out.println("3 - Binary");
+		System.out.println("4 - Entropy");
 		System.out.println("0 - Exit");
 
 		Scanner scanner = new Scanner(System.in);
@@ -93,7 +93,7 @@ public class SuffixTreeClusteringMain {
 
 		int answer = processLine(line);
 
-		while (answer < 0 || answer > 3) {
+		while (answer < 0 || answer > 4) {
 			System.err.println("Undefined Answer! Please enter again:");
 			line = scanner.nextLine();
 			answer = processLine(line);
@@ -109,6 +109,9 @@ public class SuffixTreeClusteringMain {
 		case 3:
 			features = FeatureType.BINARY;
 			break;
+		case 4:
+			features = FeatureType.ENTROPY;
+			break;
 		default:
 			scanner.close();
 			System.exit(0);
@@ -116,7 +119,8 @@ public class SuffixTreeClusteringMain {
 		}
 
 		// Schritt 2: durchlaufe Liste, suche für jeden Knoten die unit und
-		// notiere Betrag der unit nach tf/idf + speichere in Vektor
+		// notiere Betrag der unit nach dem gewählten Gewichtungsmaß + speichere
+		// in Vektor
 		for (Type doc : corpus.getTypes()) {
 			LOGGER.info(String.format("Node weights for Type %s (%s)\n",
 					doc.getID(), doc.getString()));
@@ -128,6 +132,9 @@ public class SuffixTreeClusteringMain {
 			}
 			System.out.println("]");
 		}
+
+		// Schritt 2a: reduziere Dimensionen der Vektoren mithilfe von SVD
+		// TODO...
 
 		List<Type> types = new ArrayList<Type>(corpus.getTypes());
 		System.out.println("****************\n");
@@ -168,12 +175,14 @@ public class SuffixTreeClusteringMain {
 		}
 	}
 
-	private static Map<Integer, String> fillTypeStrings(List<Type> kwipTypes) throws Exception {
+	private static Map<Integer, String> fillTypeStrings(List<Type> kwipTypes)
+			throws Exception {
 		Map<Integer, String> toReturn = new TreeMap<>();
 		for (Type type : kwipTypes) {
-			if(!toReturn.containsKey(type.getID()))
+			if (!toReturn.containsKey(type.getID()))
 				toReturn.put(type.getID(), type.getString());
-			else throw new Exception("There should not be 2 types with same ID!");
+			else
+				throw new Exception("There should not be 2 types with same ID!");
 		}
 		return toReturn;
 	}

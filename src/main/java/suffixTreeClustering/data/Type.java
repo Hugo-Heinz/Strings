@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import suffixTreeClustering.features.BinaryFeatures;
+import suffixTreeClustering.features.EntropyFeatures;
 import suffixTreeClustering.features.FeatureType;
 import suffixTreeClustering.features.FeatureVector;
 import suffixTreeClustering.features.TfDfFeatures;
@@ -42,6 +43,8 @@ public final class Type implements Comparable<Type> {
 			case BINARY:
 				vector = new BinaryFeatures(this, corpus).vector();
 				break;
+			case ENTROPY:
+				vector = new EntropyFeatures(this, corpus).vector();
 			default:
 				System.err.println("Feature Type unknown");
 			}
