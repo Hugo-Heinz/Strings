@@ -20,6 +20,7 @@ import suffixTreeClustering.data.Node;
 import suffixTreeClustering.data.Type;
 import suffixTreeClustering.features.FeatureType;
 import suffixTreeClustering.st_interface.SuffixTreeInfo;
+import suffixTreeClustering.svd.DimensionReducer;
 import suffixTreeClustering.xml.XMLDataReader;
 import util.KwipXmlReader;
 import util.LoggerConfigurator;
@@ -133,10 +134,12 @@ public class SuffixTreeClusteringMain {
 			System.out.println("]");
 		}
 
-		// Schritt 2a: reduziere Dimensionen der Vektoren mithilfe von SVD
-		// TODO...
-
-		List<Type> types = new ArrayList<Type>(corpus.getTypes());
+		/* Schritt 2a: reduziere Dimensionen der Vektoren mithilfe von SVD
+		/ TODO:
+		 * boolean einführen, ob überhaupt reduziert werden soll
+		 * 
+		 */
+		List<Type> types = DimensionReducer.reduce(corpus.getTypes());
 		System.out.println("****************\n");
 
 		// ************* User Input ***************************//
