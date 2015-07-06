@@ -71,7 +71,7 @@
 			<version>1.3</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.apache.commons</groupId>
+			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.3.2</version>
 		</dependency>
@@ -116,6 +116,12 @@
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-bundle</artifactId>
 			<version>1.18.1</version>
+		</dependency>
+		<!-- Alias-i Lingpipe -->
+		<dependency>
+			<groupId>com.aliasi</groupId>
+			<artifactId>lingpipe</artifactId>
+			<version>4.0.1</version>
 		</dependency>
 	</dependencies>
 </project>
