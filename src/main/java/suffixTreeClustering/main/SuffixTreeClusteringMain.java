@@ -139,7 +139,7 @@ public class SuffixTreeClusteringMain {
 		 * boolean einführen, ob überhaupt reduziert werden soll
 		 * 
 		 */
-		List<Type> types = DimensionReducer.reduce(corpus.getTypes());
+		List<Type> types = DimensionReducer.reduce(corpus);
 		System.out.println("****************\n");
 
 		// ************* User Input ***************************//
