@@ -161,7 +161,7 @@ public class Node implements Comparable<Node> {
 	public Integer getTermfrequencyFor(Type type) {
 		if (this.typesAndFrequencies.get(type) != null)
 			return this.typesAndFrequencies.get(type).size();
-		return null;
+		return 0;
 	}
 
 	/**
