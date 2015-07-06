@@ -45,6 +45,7 @@ public final class Type implements Comparable<Type> {
 				break;
 			case ENTROPY:
 				vector = new EntropyFeatures(this, corpus).vector();
+				break;
 			default:
 				System.err.println("Feature Type unknown");
 			}
@@ -81,7 +82,9 @@ public final class Type implements Comparable<Type> {
 		return other.ID == this.ID && this.string.contentEquals(other.string);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -98,9 +101,9 @@ public final class Type implements Comparable<Type> {
 	@Override
 	public int compareTo(Type o) {
 		int stringDiff = this.string.compareTo(o.string);
-		if(stringDiff != 0)
+		if (stringDiff != 0)
 			return stringDiff;
-		//strings are equal, compare IDs
+		// strings are equal, compare IDs
 		return this.ID - o.ID;
 	}
 
@@ -124,5 +127,12 @@ public final class Type implements Comparable<Type> {
 
 	public List<Token> getTokens() {
 		return tokens;
+	}
+
+	/*
+	 * for security reasons, this method should not be public...
+	 */
+	public void setFeatureVector(FeatureVector featureVector) {
+		this.vector = featureVector;
 	}
 }
