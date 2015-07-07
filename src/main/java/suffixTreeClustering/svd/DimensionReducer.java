@@ -1,8 +1,8 @@
 package suffixTreeClustering.svd;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -11,11 +11,16 @@ import suffixTreeClustering.features.FeatureVector;
 import suffixTreeClustering.st_interface.SuffixTreeInfo;
 import util.ArrayConverter;
 
+import com.aliasi.io.Reporters;
 import com.aliasi.matrix.SvdMatrix;
 
 public class DimensionReducer {
 
+	private static final Logger LOGGER = Logger.getGlobal();
+
 	public static List<Type> reduce(SuffixTreeInfo corpus) {
+		LOGGER.entering(DimensionReducer.class.getSimpleName(), "reduce");
+
 		List<Type> toReturn = new ArrayList<Type>(corpus.getTypes());
 
 		double[][] matrix = createMatrix(corpus);
@@ -24,7 +29,10 @@ public class DimensionReducer {
 
 		for (int i = 0; i < docVectors.length; i++) {
 			double[] typeVector = docVectors[i];
-			toReturn.get(i).setFeatureVector(new FeatureVector(ArrayConverter.fromPrimitive(typeVector)));
+			toReturn.get(i)
+					.setFeatureVector(
+							new FeatureVector(ArrayConverter
+									.fromPrimitive(typeVector)));
 			/*
 			 * so einfach kann das eigentlich nicht sein, man muss ja sehen,
 			 * dass die ursprünglichen Types die richtigen Vektoren zugewiesen
@@ -54,8 +62,9 @@ public class DimensionReducer {
 		int maxEpochs = 50000;
 
 		SvdMatrix svd = SvdMatrix.svd(matrix, maxFactors, featureInit,
-				initialLearningRate, annealingRate, regularization, null,
-				minImprovement, minEpochs, maxEpochs);
+				initialLearningRate, annealingRate, regularization,
+				Reporters.stream(System.out, "UTF-8"), minImprovement,
+				minEpochs, maxEpochs);
 
 		double[] scales = svd.singularValues(); // =Sigma
 		double[][] termVectors = svd.leftSingularVectors(); // =U
@@ -73,7 +82,7 @@ public class DimensionReducer {
 			FeatureVector vector = type.getVector();
 			double[] values = ArrayUtils.toPrimitive(vector.getValues());
 			matrix[row] = values;
-
+			row++;
 		}
 		return matrix;
 	}
