@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -134,12 +133,25 @@ public class SuffixTreeClusteringMain {
 			System.out.println("]");
 		}
 
-		/* Schritt 2a: reduziere Dimensionen der Vektoren mithilfe von SVD
-		/ TODO:
-		 * boolean einführen, ob überhaupt reduziert werden soll
-		 * 
+		/*
+		 * Schritt 2a: reduziere Dimensionen der Vektoren mithilfe von SVD /
+		 * TODO: boolean einführen, ob überhaupt reduziert werden soll
 		 */
 		List<Type> types = DimensionReducer.reduce(corpus);
+		System.out.println("****************\n");
+
+		/*
+		 * nochmal ausgeben
+		 */
+		for (Type doc : corpus.getTypes()) {
+			LOGGER.info(String.format("Node weights for Type %s (%s)\n",
+					doc.getID(), doc.getString()));
+			System.out.print("[");
+			for (Double val : doc.getVector().getValues()) {
+				System.out.print(val.doubleValue() + ", ");
+			}
+			System.out.println("]");
+		}
 		System.out.println("****************\n");
 
 		// ************* User Input ***************************//
