@@ -24,6 +24,8 @@ public class DimensionReducer {
 		List<Type> toReturn = new ArrayList<Type>(corpus.getTypes());
 
 		double[][] matrix = createMatrix(corpus);
+		LOGGER.info("Matrix dimensions: " + matrix.length + "x"
+				+ matrix[0].length);
 
 		double[][] docVectors = svd(matrix, toReturn);
 
@@ -50,17 +52,19 @@ public class DimensionReducer {
 	}
 
 	private static double[][] svd(double[][] matrix, List<Type> types) {
-		// TODO: determine factor k
+		LOGGER.entering(DimensionReducer.class.getSimpleName(), "svd");
+		// TODO: determine factor k - set factor k as parameter
 
 		int maxFactors = 200; // number of factors = latent semantic dimensions
 		double featureInit = 0.01;
-		double initialLearningRate = 0.005;
+		double initialLearningRate = 0.001;
 		int annealingRate = 1000;
 		double regularization = 0.00;
 		double minImprovement = 0.0000;
 		int minEpochs = 10;
 		int maxEpochs = 50000;
 
+		LOGGER.finer("Starting svd...");
 		SvdMatrix svd = SvdMatrix.svd(matrix, maxFactors, featureInit,
 				initialLearningRate, annealingRate, regularization,
 				Reporters.stream(System.out, "UTF-8"), minImprovement,
