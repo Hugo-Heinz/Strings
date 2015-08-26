@@ -108,11 +108,11 @@ public class SplitDecisionNode {
 		// Aktivierungspotential auf das minimal notwenige erhoehen
 		if (this.getJoin()!=null && this.getSplit()!=null){
 			
-			double minimalwert = Math.max(Math.min(this.getJoin().getAktivierungsPotential(), this.getSplit().getAktivierungsPotential()),this.getBewertung());
+			double minimalwert = Math.min(Math.max(this.getJoin().getAktivierungsPotential(), this.getSplit().getAktivierungsPotential()),this.getBewertung());
 			
 			
 			// Falls der Wert sich nicht erhoeht, wird die Rekursion abgebrochen
-			if (minimalwert<=this.aktivierungsPotential)
+			if (minimalwert>=this.aktivierungsPotential)
 				return false;
 			this.aktivierungsPotential = minimalwert;
 		}
@@ -190,13 +190,13 @@ public class SplitDecisionNode {
 		
 		if (this.symbol != null)
 			sb.append(this.symbol+":");
-		if (this.getAktivierungsPotential()==Double.MAX_VALUE)
+		/*if (this.getAktivierungsPotential()==Double.MAX_VALUE)
 			sb.append("X");
-		else
+		else*/
 			sb.append(NUMMERNFORMAT.format(this.getAktivierungsPotential()));
-		if (this.getBewertung()==Double.MAX_VALUE)
+		/*if (this.getBewertung()==Double.MAX_VALUE)
 			sb.append(" [X]");
-		else
+		else*/
 			sb.append(" ["+NUMMERNFORMAT.format(this.getBewertung())+"]");
 		if (this.notiz != null && !this.notiz.isEmpty())
 			sb.append(this.notiz);

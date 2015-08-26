@@ -4,14 +4,13 @@ import treeBuilder.Knoten;
 
 public class SymbolBewerter {
 	
-	private double mindestKostenProSymbolschritt;
 	private double bewertungsAbfallFaktor;
+	private boolean letzteBewertungMitEinbeziehen;
 
-	public SymbolBewerter(double mindestKostenProSymbolschritt,
-			double bewertungsAbfallFaktor) {
+	public SymbolBewerter(double bewertungsAbfallFaktor, boolean letzteBewertungMitEinbeziehen) {
 		super();
-		this.mindestKostenProSymbolschritt = mindestKostenProSymbolschritt;
 		this.bewertungsAbfallFaktor = bewertungsAbfallFaktor;
+		this.letzteBewertungMitEinbeziehen = letzteBewertungMitEinbeziehen;
 	}
 
 	/**
@@ -29,21 +28,6 @@ public class SymbolBewerter {
 	}
 
 	/**
-	 * @return the mindestKostenProSymbolschritt
-	 */
-	public double getMindestKostenProSymbolschritt() {
-		return mindestKostenProSymbolschritt;
-	}
-
-	/**
-	 * @param mindestKostenProSymbolschritt the mindestKostenProSymbolschritt to set
-	 */
-	public void setMindestKostenProSymbolschritt(
-			double mindestKostenProSymbolschritt) {
-		this.mindestKostenProSymbolschritt = mindestKostenProSymbolschritt;
-	}
-
-	/**
 	 * Bewertet ein einzelnes Symbol (im Sinne, dass die Uebergangshuerde vom Elternknoten aus errechnet wird).
 	 * @param symbol Symbol (Zeichenkette mit Laenge eins)
 	 * @param elternKnoten Elternknoten im Suffixbaum
@@ -51,7 +35,7 @@ public class SymbolBewerter {
 	 */
 	public double symbolBewerten(Character symbol, Knoten elternKnoten, double letzteBewertung){
 		// Variable fuer das Gesamtergebnis, Standardwert ist die maximal moegliche Huerde
-		double bewertung = Double.MAX_VALUE;
+		double bewertung = 0d; //Double.MAX_VALUE;
 		
 		// Pruefen, ob der aktuelle Knoten des Suffixbaumes unter dem aktuellen Symbol der Zeichenkette einen Kindknoten fuehrt.
 		if (symbol != null && elternKnoten != null && elternKnoten.getKinder().containsKey(symbol.toString())){
@@ -68,12 +52,12 @@ public class SymbolBewerter {
 			// Anteil des Kindknotenzaehlers am Zaehler seines Elternknoten ermitteln
 			double anteil = new Double(teilwert)/new Double(gesamtwert); // 0 < anteil <= 1
 			
-			// Bewertung fuer diesen Kindknoten errechnen
-			bewertung = (1d/anteil)-1d+this.mindestKostenProSymbolschritt;
+			// Bewertung fuer diesen Kindknoten
+			bewertung = anteil;
 			
-			// Abfall in der Bewertung miteinbeziehen (deutet auf paradigmatische Grenze hin)
-			if (letzteBewertung<bewertung)
-				bewertung = bewertung * (bewertung/letzteBewertung) * this.bewertungsAbfallFaktor;
+			// Ggf. Abfall in der Bewertung miteinbeziehen (deutet auf paradigmatische Grenze hin)
+			if (this.letzteBewertungMitEinbeziehen && letzteBewertung>bewertung)
+				bewertung = bewertung/(letzteBewertung * this.bewertungsAbfallFaktor);
 			
 		}
 		

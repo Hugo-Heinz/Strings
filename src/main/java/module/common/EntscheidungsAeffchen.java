@@ -29,7 +29,7 @@ public class EntscheidungsAeffchen {
 		aktuellerEntscheidungsKnoten = entscheidungsbaumWurzelknoten;
 		if (debug) aktuellerEntscheidungsKnoten.setNotiz(" {A}");
 		aktuellerKnoten = aktuellerEntscheidungsKnoten.getSuffixTrieKindKnoten();
-		double letzteBewertung = Double.MAX_VALUE;
+		double letzteBewertung = 0d;
 		
 		// Schleife ueber alle Zeichen (das erste ist bereits im Entsche4idungsbaumwurzelknoten hinterlegt)
 		for (int index=1; index<zeichenkette.length();){
@@ -38,7 +38,7 @@ public class EntscheidungsAeffchen {
 			if (aktuellerEntscheidungsKnoten.getSplit() != null && aktuellerEntscheidungsKnoten.getJoin() != null){
 				
 				// Kindelement mit dem geringsten Widerstand auswaehlen
-				if (aktuellerEntscheidungsKnoten.getSplit().getAktivierungsPotential()<aktuellerEntscheidungsKnoten.getJoin().getAktivierungsPotential()){
+				if (aktuellerEntscheidungsKnoten.getSplit().getAktivierungsPotential()>aktuellerEntscheidungsKnoten.getJoin().getAktivierungsPotential()){
 					letzteBewertung = aktuellerEntscheidungsKnoten.getSplit().getBewertung();
 					if (debug) aktuellerEntscheidungsKnoten.setNotiz(null);
 					aktuellerEntscheidungsKnoten = aktuellerEntscheidungsKnoten.getSplit();
@@ -58,7 +58,7 @@ public class EntscheidungsAeffchen {
 				
 				// Der aktuelle Entscheidungsbaumknoten hat noch KEINE Kindelemente, daher muessen zunaechst die Bewertungen ermittelt werden
 				double bewertungVerbinde = symbolBewerter.symbolBewerten(zeichenkette.charAt(index), aktuellerKnoten, letzteBewertung);
-				double bewertungTrenne = symbolBewerter.symbolBewerten(zeichenkette.charAt(index), suffixbaumWurzelknoten, Double.MAX_VALUE);
+				double bewertungTrenne = symbolBewerter.symbolBewerten(zeichenkette.charAt(index), suffixbaumWurzelknoten, 0d);
 				
 				SplitDecisionNode entscheidungsknotenVerbinde = new SplitDecisionNode(bewertungVerbinde, aktuellerKnoten, aktuellerKnoten.getKinder().get(new Character(zeichenkette.charAt(index)).toString()), aktuellerEntscheidungsKnoten, zeichenkette.charAt(index));
 				SplitDecisionNode entscheidungsknotenTrenne = new SplitDecisionNode(bewertungTrenne, suffixbaumWurzelknoten, suffixbaumWurzelknoten.getKinder().get(new Character(zeichenkette.charAt(index)).toString()), aktuellerEntscheidungsKnoten, zeichenkette.charAt(index));

@@ -27,9 +27,9 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 	public static final String PROPERTYKEY_ENCODING = "Encoding";
 	public static final String PROPERTYKEY_BUFFERLENGTH = "Buffer length";
 	public static final String PROPERTYKEY_DIVIDER = "Token divider";
-	public static final String PROPERTYKEY_MINDESTKOSTENPROEBENE = "Minimal cost";
 	public static final String PROPERTYKEY_BEWERTUNGSABFALLFAKTOR = "Bewertungsabfallfaktor";
 	public static final String PROPERTYKEY_BEWERTUNGAUSGEBEN = "Bewertung mit in Ausgabe schreiben";
+	public static final String PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN = "Bewertungsabfall beruecksichtigen";
 
 	// Local variables
 	private File file;
@@ -37,9 +37,9 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 	private String encoding = "UTF-8";
 	private int pufferGroesse = 12;
 	private String divider = "\t";
-	private double mindestKostenProSymbolEbene;
 	private double bewertungsAbfallFaktor;
 	private boolean bewertungAusgeben = false;
+	private boolean letzteBewertungMitEinbeziehen;
 
 	public ParadigmenErmittlerModul(CallbackReceiver callbackReceiver,
 			Properties properties) throws Exception {
@@ -65,8 +65,7 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 				"Groesse des Eingabepuffers (sollte nicht die Tiefe des Suffixbaumes ueberschreiten!)");
 		this.getPropertyDescriptions().put(PROPERTYKEY_DIVIDER,
 				"Divider that is inserted in between the tokens on output");
-		this.getPropertyDescriptions().put(PROPERTYKEY_MINDESTKOSTENPROEBENE,
-				"Minimalkosten fuer jeden Verknuepfungsschritt; hoehere Werte erhoehen stark die vom Bewertungsalgorithmus durchgefuehrten Berechnungsdurchlaufe [double]");
+		this.getPropertyDescriptions().put(PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN,"Bezieht den Abfall der Bewertung von einem auf das naechste Symbol in der Bewertung von letzterem mit ein.");
 		this.getPropertyDescriptions().put(PROPERTYKEY_BEWERTUNGSABFALLFAKTOR,
 				"Faktor zur Gewichtung eines Abfalls der Bewertung von einem auf das naechste Symbol [double, >0, 1=neutral]");
 		this.getPropertyDescriptions().put(PROPERTYKEY_BEWERTUNGAUSGEBEN,
@@ -81,7 +80,7 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 		this.getPropertyDefaultValues().put(PROPERTYKEY_ENCODING, "UTF-8");
 		this.getPropertyDefaultValues().put(PROPERTYKEY_BUFFERLENGTH, "10");
 		this.getPropertyDefaultValues().put(PROPERTYKEY_DIVIDER, "\t");
-		this.getPropertyDefaultValues().put(PROPERTYKEY_MINDESTKOSTENPROEBENE, "1");
+		this.getPropertyDefaultValues().put(PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN, "true");
 		this.getPropertyDefaultValues().put(PROPERTYKEY_BEWERTUNGSABFALLFAKTOR, "1");
 		this.getPropertyDefaultValues().put(PROPERTYKEY_BEWERTUNGAUSGEBEN, "false");
 
@@ -129,7 +128,7 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 		 */
 		
 		// Symbolbewerter instanziieren
-		SymbolBewerter symbolBewerter = new SymbolBewerter(this.mindestKostenProSymbolEbene, this.bewertungsAbfallFaktor);
+		SymbolBewerter symbolBewerter = new SymbolBewerter(this.bewertungsAbfallFaktor, this.letzteBewertungMitEinbeziehen);
 		
 		// Erstes Zeichen einlesen
 		int zeichenCode = this.getInputCharPipe().getInput().read();
@@ -170,7 +169,7 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 				
 				// Ggf. Entscheidungsbaum beginnen
 				if (entscheidungsbaumWurzelknoten == null){
-					entscheidungsbaumWurzelknoten = new SplitDecisionNode(0d, suffixbaumWurzelknoten, suffixbaumWurzelknoten.getKinder().get(new Character(puffer.charAt(0)).toString()), null, puffer.charAt(0));
+					entscheidungsbaumWurzelknoten = new SplitDecisionNode(1d, suffixbaumWurzelknoten, suffixbaumWurzelknoten.getKinder().get(new Character(puffer.charAt(0)).toString()), null, puffer.charAt(0));
 					//entscheidungsBaumZweige.put(symbol, entscheidungsbaumWurzelknoten);
 				}
 				
@@ -186,7 +185,7 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 				while (letztesBlatt.getElternKnoten() != null){
 					letztesBlatt = letztesBlatt.getElternKnoten();
 					double trennstellenBewertung = letztesBlatt.getJoin().getAktivierungsPotential()-letztesBlatt.getSplit().getAktivierungsPotential();
-					if (trennstellenBewertung>0){
+					if (trennstellenBewertung<0){
 						letzteTrennstelle = letztesBlatt;
 						letzteTrennstellenBewertung = trennstellenBewertung;
 					}
@@ -255,6 +254,8 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 		
 		if (this.getProperties().containsKey(PROPERTYKEY_USEGZIP))
 			this.useGzip = Boolean.parseBoolean(this.getProperties().getProperty(PROPERTYKEY_USEGZIP));
+		else if (this.getPropertyDefaultValues() != null && this.getPropertyDefaultValues().containsKey(PROPERTYKEY_USEGZIP))
+			this.useGzip = Boolean.parseBoolean(this.getPropertyDefaultValues().get(PROPERTYKEY_USEGZIP));
 		
 		if (this.getProperties().containsKey(PROPERTYKEY_ENCODING))
 			this.encoding = this.getProperties().getProperty(PROPERTYKEY_ENCODING);
@@ -270,11 +271,6 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 			this.divider = this.getProperties().getProperty(PROPERTYKEY_DIVIDER);
 		else if (this.getPropertyDefaultValues() != null && this.getPropertyDefaultValues().containsKey(PROPERTYKEY_DIVIDER))
 				this.divider = this.getPropertyDefaultValues().get(PROPERTYKEY_DIVIDER);
-		
-		if (this.getProperties().containsKey(PROPERTYKEY_MINDESTKOSTENPROEBENE))
-			this.mindestKostenProSymbolEbene = Double.parseDouble(this.getProperties().getProperty(PROPERTYKEY_MINDESTKOSTENPROEBENE));
-		else if (this.getPropertyDefaultValues() != null && this.getPropertyDefaultValues().containsKey(PROPERTYKEY_MINDESTKOSTENPROEBENE))
-			this.mindestKostenProSymbolEbene = Double.parseDouble(this.getPropertyDefaultValues().get(PROPERTYKEY_MINDESTKOSTENPROEBENE));
 	
 		if (this.getProperties().containsKey(PROPERTYKEY_BEWERTUNGSABFALLFAKTOR))
 			this.bewertungsAbfallFaktor = Double.parseDouble(this.getProperties().getProperty(PROPERTYKEY_BEWERTUNGSABFALLFAKTOR));
@@ -283,6 +279,13 @@ public class ParadigmenErmittlerModul extends ModuleImpl {
 		
 		if (this.getProperties().containsKey(PROPERTYKEY_BEWERTUNGAUSGEBEN))
 			this.bewertungAusgeben = Boolean.parseBoolean(this.getProperties().getProperty(PROPERTYKEY_BEWERTUNGAUSGEBEN));
+		else if (this.getPropertyDefaultValues() != null && this.getPropertyDefaultValues().containsKey(PROPERTYKEY_BEWERTUNGAUSGEBEN))
+			this.bewertungAusgeben = Boolean.parseBoolean(this.getPropertyDefaultValues().get(PROPERTYKEY_BEWERTUNGAUSGEBEN));
+		
+		if (this.getProperties().containsKey(PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN))
+			this.letzteBewertungMitEinbeziehen = Boolean.parseBoolean(this.getProperties().getProperty(PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN));
+		else if (this.getPropertyDefaultValues() != null && this.getPropertyDefaultValues().containsKey(PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN))
+			this.letzteBewertungMitEinbeziehen = Boolean.parseBoolean(this.getPropertyDefaultValues().get(PROPERTYKEY_LETZTEBEWERTUNGMITEINBEZIEHEN));
 			
 		super.applyProperties();
 	}
