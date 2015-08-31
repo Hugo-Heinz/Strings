@@ -28,6 +28,7 @@ public abstract class ModuleImpl implements Module {
 	private List<Class<?>> supportedInputs = new ArrayList<Class<?>>();
 	private List<Class<?>> supportedOutputs = new ArrayList<Class<?>>();
 	private String description = "(no description)";
+	private int percentComplete = 0;
 
 	public ModuleImpl(CallbackReceiver callbackReceiver, Properties properties)
 			throws Exception {
@@ -253,6 +254,7 @@ public abstract class ModuleImpl implements Module {
 			
 			// Update status
 			this.status = Module.STATUSCODE_RUNNING;
+			this.percentComplete = 0;
 
 			// Log message
 			Logger.getLogger("").log(
@@ -273,8 +275,10 @@ public abstract class ModuleImpl implements Module {
 									+ " finished.");
 
 			// Update status
-			if (result)
+			if (result){
 				this.status = Module.STATUSCODE_SUCCESS;
+				this.percentComplete = 100;
+			}
 			else
 				this.status = Module.STATUSCODE_FAILURE;
 
@@ -388,6 +392,21 @@ public abstract class ModuleImpl implements Module {
 	@Override
 	public void setDescription(String desc) {
 		this.description = desc;
+	}
+
+	/* (non-Javadoc)
+	 * @see modularization.Module#getPercentComplete()
+	 */
+	@Override
+	public int getPercentComplete() {
+		return percentComplete;
+	}
+
+	/**
+	 * @param percentComplete the percentComplete to set
+	 */
+	public void setPercentComplete(int percentComplete) {
+		this.percentComplete = Math.max(0,Math.min(percentComplete,100));
 	}
 
 }

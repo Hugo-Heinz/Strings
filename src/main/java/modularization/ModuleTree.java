@@ -647,7 +647,7 @@ public class ModuleTree extends CallbackReceiverImpl {
 		}
 
 		// Print module details
-		result.append(module.getName() + "[" + module.getStatus() + "] ");
+		result.append(module.getName() + "[" + module.getStatus() + ", "+module.getPercentComplete()+"%] ");
 
 		// Recursively run this method for the tree node's children
 		Enumeration<?> childNodes = parentNode.children();

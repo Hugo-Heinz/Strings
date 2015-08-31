@@ -44,16 +44,22 @@ public class SymbolBewerter {
 			Knoten kindKnoten = elternKnoten.getKinder().get(symbol.toString());
 			
 			// Ermitteln, welchen Wert der aktuelle Knoten hat
-			int gesamtwert = elternKnoten.getZaehler();
+			double gesamtwert = elternKnoten.getZaehler();
+			
+			// Anzahl der Kindknoten ermitteln
+			double kindknotenAnzahl = elternKnoten.getKinder().size();
+			
+			// Durchschnittlichen Zaehlerwert pro Kindknoten ermitteln
+			double durchschnitt = gesamtwert/kindknotenAnzahl;
 			
 			// Ermitteln, welchen Wert der Kindknoten hat
-			int teilwert = kindKnoten.getZaehler();
+			double teilwert = kindKnoten.getZaehler();
 			
-			// Anteil des Kindknotenzaehlers am Zaehler seines Elternknoten ermitteln
-			double anteil = new Double(teilwert)/new Double(gesamtwert); // 0 < anteil <= 1
+			// Abweichung des Kindknotenwertes vom Durchschnittswert errechnen
+			double abweichung = teilwert/durchschnitt; // 1 == keine Information
 			
 			// Bewertung fuer diesen Kindknoten
-			bewertung = anteil;
+			bewertung = abweichung;
 			
 			// Ggf. Abfall in der Bewertung miteinbeziehen (deutet auf paradigmatische Grenze hin)
 			if (this.letzteBewertungMitEinbeziehen && letzteBewertung>bewertung)

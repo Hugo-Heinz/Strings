@@ -160,6 +160,12 @@ public interface Module extends CallbackProcess {
 	public int getStatus();
 	
 	/**
+	 * Returns the percentage that the processing is completed so far.
+	 * @return percentage 0-100
+	 */
+	public int getPercentComplete();
+	
+	/**
 	 * Applies all relevant properties to this instance. Subclasses should
 	 * override this, apply the properties they use themselves and call
 	 * super().applyProperties() afterwards.
