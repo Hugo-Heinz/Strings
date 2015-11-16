@@ -44,6 +44,7 @@ import modules.suffixNetBuilder.SuffixNetBuilderModule;
 import modules.suffixTree.GeneralisedSuffixTreeModule;
 import modules.suffixTreeClusteringModuleWrapper.SuffixTreeClusteringModuleWrapper;
 import modules.treeBuilder.AtomicRangeSuffixTrieBuilder;
+import modules.treeBuilder.ShuStringModule;
 import modules.treeBuilder.TreeBuilder;
 import modules.treeBuilder2Output.TreeBuilder2OutputController;
 import modules.visualizationModules.ASCIIGraph;
@@ -307,6 +308,13 @@ public class ModuleWorkbenchController{ // TODO anderer Listener
 		reverserModuleProperties.setProperty(ModuleImpl.PROPERTYKEY_NAME, reverserModule.getPropertyDefaultValues().get(ModuleImpl.PROPERTYKEY_NAME));
 		reverserModule.applyProperties();
 		
+		// ShuStringModule
+		Properties shuStringModuleProperties = new Properties();
+		ShuStringModule shuStringModule  = new ShuStringModule(moduleNetwork, 
+				shuStringModuleProperties);
+		shuStringModuleProperties.setProperty(ModuleImpl.PROPERTYKEY_NAME, shuStringModule.getPropertyDefaultValues().get(ModuleImpl.PROPERTYKEY_NAME));
+		shuStringModule.applyProperties();
+		
 		/*
 		 * ADD MODULE INSTANCES TO LIST BELOW
 		 */
@@ -343,6 +351,7 @@ public class ModuleWorkbenchController{ // TODO anderer Listener
 		availableModules.put(suffixTreeClusteringModuleWrapper.getName(), suffixTreeClusteringModuleWrapper);
 		availableModules.put(bagsOfWordsDistancesModule.getName(), bagsOfWordsDistancesModule);
 		availableModules.put(reverserModule.getName(), reverserModule);
+		availableModules.put(shuStringModule.getName(), shuStringModule);
 	}
 	
 	/**
