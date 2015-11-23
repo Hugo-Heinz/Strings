@@ -144,7 +144,7 @@ public class ShuStringModule extends ModuleImpl {
 				segments.removeFirst();
 				
 				// Output SHUS value
-				this.getOutputPorts().get(ID_OUTPUT).outputToAllCharPipes(shuValue+"");
+				this.getOutputPorts().get(ID_OUTPUT).outputToAllCharPipes(shuValue+outputdelimiter);
 				
 				// Decrease SHUS value
 				shuValue--;
