@@ -48,6 +48,7 @@ import modules.suffixTreeModuleWrapper.GeneralisedSuffixTreeModule;
 import modules.treeBuilder.AtomicRangeSuffixTrieBuilder;
 import modules.treeBuilder.TreeBalanceIndexModule;
 import modules.treeBuilder.TreeBuilder;
+import modules.treeBuilder.TreeBuilderV2GstModule;
 import modules.treeBuilder.TreeBuilderV2Module;
 import modules.treeBuilder2Output.TreeBuilder2OutputController;
 import modules.visualizationModules.ASCIIGraph;
@@ -339,6 +340,13 @@ public class ModuleWorkbenchController{ // TODO anderer Listener
 		treeBuilderV2ModuleProperties.setProperty(ModuleImpl.PROPERTYKEY_NAME, treeBuilderV2Module.getPropertyDefaultValues().get(ModuleImpl.PROPERTYKEY_NAME));
 		treeBuilderV2Module.applyProperties();
 		
+		// TreeBuilderV2Module
+		Properties treeBuilderV2GstModuleProperties = new Properties();
+		TreeBuilderV2GstModule treeBuilderV2GstModule  = new TreeBuilderV2GstModule(moduleNetwork, 
+				treeBuilderV2GstModuleProperties);
+		treeBuilderV2GstModuleProperties.setProperty(ModuleImpl.PROPERTYKEY_NAME, treeBuilderV2GstModule.getPropertyDefaultValues().get(ModuleImpl.PROPERTYKEY_NAME));
+		treeBuilderV2GstModule.applyProperties();
+		
 		/*
 		 * ADD MODULE INSTANCES TO LIST BELOW
 		 */
@@ -379,6 +387,7 @@ public class ModuleWorkbenchController{ // TODO anderer Listener
 		availableModules.put(treeBalanceIndexModule.getName(), treeBalanceIndexModule);
 		availableModules.put(externalCommandModule.getName(), externalCommandModule);
 		availableModules.put(treeBuilderV2Module.getName(), treeBuilderV2Module);
+		availableModules.put(treeBuilderV2GstModule.getName(), treeBuilderV2GstModule);
 	}
 	
 	/**

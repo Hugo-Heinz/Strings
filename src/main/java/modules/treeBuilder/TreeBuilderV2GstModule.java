@@ -52,14 +52,14 @@ public class TreeBuilderV2GstModule extends ModuleImpl {
 		this.setDescription("TreeBuilder v2 module. Can process larger datasets more quickly. Replaces AtomicRangeSuffixTrieBuilder and TreeBuilder.");
 
 		// Add property descriptions (obligatory for every property!)
-		//this.getPropertyDescriptions().put(PROPERTYKEY_INPUTDELIMITER, "Regular expression to use as segmentation delimiter for the input; leave empty for char-by-char segmentation.");
+		this.getPropertyDescriptions().put(PROPERTYKEY_INPUTDELIMITER, "Regular expression to use as segmentation delimiter for the input; leave empty for char-by-char segmentation.");
 		//this.getPropertyDescriptions().put(PROPERTYKEY_MAXDEPTH, "Maximum depth for the resulting tree; set to -1 for no constraint.");
 		this.getPropertyDescriptions().put(PROPERTYKEY_OMITREDUNDANTINFO, "Omit redundant information upon creating the tree (do not set nodevalue, since this info is already contained within the parent's child node mapping key).");
 		this.getPropertyDescriptions().put(PROPERTYKEY_STRUCTURE, "Type of suffix tree to output; possible values are 'compact' and 'atomic'.");
 		
 		// Add property defaults (_should_ be provided for every property)
-		this.getPropertyDefaultValues().put(ModuleImpl.PROPERTYKEY_NAME, "TreeBuilder v2 Module"); // Property key for module name is defined in parent class
-		//this.getPropertyDefaultValues().put(PROPERTYKEY_INPUTDELIMITER, "[\\s]+");
+		this.getPropertyDefaultValues().put(ModuleImpl.PROPERTYKEY_NAME, "TreeBuilder v2 Module (GST)"); // Property key for module name is defined in parent class
+		this.getPropertyDefaultValues().put(PROPERTYKEY_INPUTDELIMITER, "\\$");
 		//this.getPropertyDefaultValues().put(PROPERTYKEY_MAXDEPTH, "-1");
 		this.getPropertyDefaultValues().put(PROPERTYKEY_OMITREDUNDANTINFO, "true");
 		this.getPropertyDefaultValues().put(PROPERTYKEY_STRUCTURE, "compact");
@@ -316,12 +316,16 @@ public class TreeBuilderV2GstModule extends ModuleImpl {
 		// Close input scanner
 		inputScanner.close();
 		
+		// Re-initialise leaf list
+		leafList = new ArrayList<ParentRelationTreeNode>();
+		leafList.add(rootNode);
+		
 		}
 		
 		
 		
-		// Loop over leaves to eliminate parent relations (since they make serialisation impossible)
-		Iterator<ParentRelationTreeNode> leaves = leafList.iterator();
+		// Loop over leaves to eliminate parent relations (since they make serialisation impossible) // TODO: fix
+		/*Iterator<ParentRelationTreeNode> leaves = leafList.iterator();
 		while (leaves.hasNext()){
 			ParentRelationTreeNode leaf = leaves.next();
 			ParentRelationTreeNode parent = leaf.getParentNode();
@@ -330,7 +334,10 @@ public class TreeBuilderV2GstModule extends ModuleImpl {
 				leaf = parent;
 				parent = parent.getParentNode();
 			}
-		}
+		}*/
+		
+		// Delete parent relation. FIXME: Uses stack, which is not good
+		
 		
 		
 		
@@ -363,8 +370,8 @@ public class TreeBuilderV2GstModule extends ModuleImpl {
 		super.setDefaultsIfMissing();
 		
 		// Apply own properties
-		/*this.inputDelimiter = this.getProperties().getProperty(PROPERTYKEY_INPUTDELIMITER, this.getPropertyDefaultValues().get(PROPERTYKEY_INPUTDELIMITER));
-		String maxDepthString = this.getProperties().getProperty(PROPERTYKEY_MAXDEPTH, this.getPropertyDefaultValues().get(PROPERTYKEY_MAXDEPTH));
+		this.inputDelimiter = this.getProperties().getProperty(PROPERTYKEY_INPUTDELIMITER, this.getPropertyDefaultValues().get(PROPERTYKEY_INPUTDELIMITER));
+		/*String maxDepthString = this.getProperties().getProperty(PROPERTYKEY_MAXDEPTH, this.getPropertyDefaultValues().get(PROPERTYKEY_MAXDEPTH));
 		if (maxDepthString != null)
 			this.maxDepth = Integer.parseInt(maxDepthString);*/
 
